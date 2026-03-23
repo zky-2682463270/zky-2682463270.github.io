@@ -1,51 +1,122 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的图片展示页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .image-card {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .image-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .image-card img:hover {
+            transform: scale(1.02);
+        }
+        .image-desc {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
 
-<!-- Main -->
-<div id="main">
-  <!-- Header -->
-  <header id="header">
-    <h1>{{ site.header }}</h1>
-    <h2>{{ site.subheader }}</h2>
-    <p>{{ site.bio }}</p>
-    {% if site.social %}
-      <ul class="icons">
-        {% if site.social.twitter_username and site.social.twitter_username != "" %}
-          <li><a href="https://twitter.com/{{ site.social.twitter_username }}" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-        {% endif %}
-        {% if site.social.facebook_username and site.social.facebook_username != "" %}
-          <li><a href="https://www.facebook.com/{{ site.social.facebook_username }}" class="icon fa-facebook-official"><span class="label">Facebook</span></a></li>
-        {% endif %}
-        {% if site.social.instagram_username and site.social.instagram_username != "" %}
-          <li><a href="https://instagram.com/{{ site.social.instagram_username }}" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-        {% endif %}
-        {% if site.social.github_username and site.social.github_username != "" %}
-          <li><a href="https://github.com/{{ site.social.github_username }}" class="icon fa-github"><span class="label">Github</span></a></li>
-        {% endif %}
-        {% if site.social.email and site.social.email != "" %}
-          <li><a href="mailto:{{ site.social.email }}" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
-        {% endif %}
-      </ul>
-    {% endif %}
-  </header>
+        .img-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .img-modal img {
+            max-width: 95%;
+            max-height: 95%;
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+        }
+    </style>
+</head>
 
-  <!-- Thumbnail -->
-  <section id="thumbnails">
-    {% assign gallery = site.static_files | where: "image", true %}
-    {% for image in gallery %}
-      <article>
-        <a class="thumbnail" href="{{ site.gallery_dir }}/{{ image.name }}" data-position="{{ site.thumbnail_position }}"><img src="{{ site.gallery_dir }}/{{ image.name }}" alt="{{ image.basename }}" /></a>
-        <h2>{{ image.basename | replace: "_", " " }}</h2>
-      </article>
-    {% endfor %}
-  </section>
+<body>
+    <h1 class="title">作品展示</h1>
+    <div class="image-grid" id="imageContainer"></div>
 
-  <!-- Footer -->
-  <footer id="footer">
-    <ul class="copyright">
-      <li>{{ site.copyright }}</li>
-      <li>Powered by <a href="https://jekyllrb.com/">Jekyll</a> and <a href="https://github.com/ElasticDesigns/jekyll-lens">Jekyll Lens</a></li>
-    </ul>
-  </footer>
-</div>
+    <div class="img-modal" id="imageModal">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <img id="bigImg">
+    </div>
+
+    <script>
+        // 你只需要在这里改：图片总数（你有多少张就写多少）
+       const totalImages = 6;
+
+        const container = document.getElementById('imageContainer');
+
+        for (let i = 1; i <= totalImages; i++) {
+            const card = document.createElement('div');
+            card.className = 'image-card';
+
+            const img = document.createElement('img');
+            img.src = `images/${i}.jpg`; // 重点：图片命名 1.jpg、2.jpg ...16.jpg
+            img.onclick = () => openModal(img.src);
+
+            const desc = document.createElement('p');
+            desc.className = 'image-desc';
+            desc.innerText = `图片${i}`;
+
+            card.appendChild(img);
+            card.appendChild(desc);
+            container.appendChild(card);
+        }
+
+        function openModal(src) {
+            document.getElementById('imageModal').style.display = 'flex';
+            document.getElementById('bigImg').src = src;
+        }
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
